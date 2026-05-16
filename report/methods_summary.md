@@ -1,0 +1,15 @@
+# Methods Summary — Hospital Language Drift Study
+
+## Suitable for Substack
+
+We built a corpus of 530 press releases from five US academic medical centres — UC Davis Health, UCSF, Stanford Health Care/Stanford Medicine, Duke Health, and Michigan Medicine — spanning 2010 to 2025. Documents were discovered through the Wayback Machine CDX API (for historical coverage back to 2010), live newsroom pagination, and a small set of manually seeded strategic plans and annual reports. All raw HTML was extracted using trafilatura for boilerplate stripping, with a minimum length floor of 500 tokens; PDF documents were processed with PyMuPDF. No paywalled or login-gated content was included.
+
+We measured two vocabulary categories against each document: an *operational* dictionary of 24 terms (covering concepts like utilisation, workflow, dashboard, scalable, alignment, deliverable, and operational excellence) and a *relational* dictionary of 18 terms (compassion, bedside, physician, trust, dignity, suffering, empathy, and kindness, among others). Multi-word terms were matched by regex against raw lowercased text; unigrams were lemmatised with spaCy en_core_web_sm. Rates were normalised per 10,000 tokens to control for document length.
+
+To test whether the observed drift reflects healthcare-specific change rather than general shifts in written English, we pulled Google Books Ngrams rates (2010–2019) for each unigram in the two dictionaries and computed the ratio of healthcare corpus rate to general English rate. A linear mixed-effects model with system as a random intercept (statsmodels REML) confirmed the year × category interaction: for every calendar year, the operational-to-relational gap widens by roughly 11 units per 10,000 tokens (coeff = 11.05, SE = 1.43, p < 0.001). The relational rate alone declines at ~9.9 units per year (p < 0.001).
+
+Collocation analysis (±5 token windows, spaCy lemmas, pooled across systems) shows that "nurse" has shifted from a context of *allied health professionals* in the early period to *nurse practitioner* in the late period — suggesting the title is being used to describe an expanded scope-of-practice role rather than bedside presence. "Care" appears more frequently near *primary*, *manage*, and *service line* in recent documents versus *physician*, *patient*, and *healing* in earlier ones.
+
+**Limitations**: UCSF dominates the late-period corpus (420 of 487 late documents), and Wayback CDX infrastructure was intermittently unavailable during collection, limiting early-period coverage for UCSF and Duke. Form 990 narrative sections — the document type with the strongest predicted operational signal — were blocked at download by ProPublica's access controls and are absent from this run. Strategic plans were too sparse (n=3) for system-level comparison. Replication with a larger and more balanced early corpus is warranted before treating the operational rise as settled.
+
+*Corpus: n = 530 documents, 418,000 tokens. Code and data: /Users/raldwinckle/Desktop/Language/*

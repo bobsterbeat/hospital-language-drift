@@ -1,0 +1,16 @@
+{
+  "name": "language",
+  "version": "1.0.0",
+  "description": "Quantifying lexical shifts in academic medical center public communications, 2010-2025.",
+  "main": "build_report.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "docx": "^9.6.1"
+  }
+}

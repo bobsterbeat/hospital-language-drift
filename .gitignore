@@ -1,0 +1,24 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Corpus — raw fetched HTML/PDF (large, third-party content, reproducible via fetch.py)
+corpus/raw/
+
+# Extracted text parquet (large, reproducible via extract.py)
+corpus/clean/documents.parquet
+
+# Node
+node_modules/
+package-lock.json
+
+# Logs
+run.log
+
+# macOS
+.DS_Store
+
+# Word temp files
+~$*
