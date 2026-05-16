@@ -87,6 +87,45 @@ SYSTEMS = {
 }
 
 # ---------------------------------------------------------------------------
+# Early-period (2010-2013) Wayback URL prefixes.
+# Modern URL patterns miss historical content because:
+#   - Domains changed (ucdmc.ucdavis.edu → health.ucdavis.edu,
+#     dukehealth.org → corporate.dukehealth.org)
+#   - Path case differs (uofmhealth.org/News → /news)
+#   - Old blog-style URLs (med.stanford.edu/news/comments/archives/YYYY/MM/)
+#
+# Each entry is queried via CDX with matchType=prefix (more reliable than
+# wildcard patterns, which 503 on broad domains like ucsf.edu).
+# ---------------------------------------------------------------------------
+EARLY_PREFIXES: dict[str, list[str]] = {
+    "stanford": [
+        "med.stanford.edu/news/",
+        "med.stanford.edu/news/all-news/",
+        "stanfordhealthcare.org/newsroom/",
+    ],
+    "michigan": [
+        "www.uofmhealth.org/News",        # capital-N historical
+        "www.uofmhealth.org/news",
+        "labblog.uofmhealth.org/",
+    ],
+    "duke": [
+        "dukehealth.org/about/news",
+        "dukehealth.org/blog/",
+        "corporate.dukehealth.org/news/",
+    ],
+    "ucdavis": [
+        "ucdmc.ucdavis.edu/publish/",      # historical UCDMC publish/ tree
+        "ucdmc.ucdavis.edu/newsroom/",
+        "health.ucdavis.edu/news/",
+    ],
+    "ucsf": [
+        "www.ucsf.edu/news/",
+        "ucsfhealth.org/news/",
+    ],
+}
+
+
+# ---------------------------------------------------------------------------
 # Manual seed PDFs (strategic plans, annual reports).
 # Add URLs here as you find them; discover.py will include them in the manifest
 # without fetching. fetch.py will download them.
@@ -133,6 +172,131 @@ def _now() -> str:
 # Wayback CDX
 # ---------------------------------------------------------------------------
 CDX_BASE = "http://web.archive.org/cdx/search/cdx"
+
+
+def _cdx_get_with_retry(
+    client: httpx.Client, params: dict, attempts: int = 4
+) -> list | None:
+    """CDX requests routinely 503 on broad queries; retry with backoff."""
+    backoff = 3
+    for i in range(attempts):
+        try:
+            r = client.get(CDX_BASE, params=params, timeout=45)
+        except Exception as exc:
+            log.warning("CDX request raised %s (try %d/%d)", exc, i + 1, attempts)
+            time.sleep(backoff)
+            backoff *= 2
+            continue
+        if r.status_code == 503:
+            log.info("CDX 503 (try %d/%d), backing off %ds", i + 1, attempts, backoff)
+            time.sleep(backoff)
+            backoff *= 2
+            continue
+        if r.status_code != 200:
+            log.warning("CDX HTTP %d for %s", r.status_code, params.get("url"))
+            return None
+        try:
+            return r.json()
+        except Exception:
+            return None
+    return None
+
+
+# Heuristic patterns that mark a URL as an article (not an index page).
+# We want path segments suggesting per-article slugs, not category landings.
+_ARTICLE_HINTS = re.compile(
+    r"(?:"
+    r"/\d{4}/\d{1,2}/"            # /YYYY/MM/ in path
+    r"|/news/[^/]+\.html?$"       # /news/some-slug.html
+    r"|/blog/[^/]+/?$"            # /blog/slug
+    r"|/(?:press[-_]release|story|article|publish)/"
+    r"|-\d{4}-\d{1,2}-\d{1,2}"    # date stamp in slug
+    r"|/\d{4,6}/?$"               # numeric article id
+    r")",
+    re.IGNORECASE,
+)
+
+_INDEX_BLOCKLIST = re.compile(
+    r"(?:/tag/|/category/|/author/|/page/|/feed/?$|/comments/?$|\?|#"
+    r"|/archives/?$|/index\.|/sitemap|/rss)",
+    re.IGNORECASE,
+)
+
+
+def _looks_like_article(url: str) -> bool:
+    if _INDEX_BLOCKLIST.search(url):
+        return False
+    return bool(_ARTICLE_HINTS.search(url))
+
+
+def cdx_prefix_articles(
+    client: httpx.Client,
+    prefix: str,
+    year_from: int,
+    year_to: int,
+    max_per_year: int = 25,
+    page_size: int = 1500,
+) -> list[dict]:
+    """Discover article snapshots under a URL prefix, year-by-year.
+
+    Issues one CDX call per year (smaller responses → fewer 503s than one
+    multi-year call), uses matchType=prefix + collapse=urlkey so each
+    distinct article URL is returned once. Retries with backoff on 503.
+    """
+    by_year: dict[int, list[dict]] = {}
+    for yr in range(year_from, year_to + 1):
+        params = {
+            "url": prefix,
+            "matchType": "prefix",
+            "from": f"{yr}0101",
+            "to":   f"{yr}1231",
+            "output": "json",
+            "fl": "timestamp,original",
+            "filter": ["statuscode:200", "mimetype:text/html"],
+            "collapse": "urlkey",
+            "limit": page_size,
+        }
+        rows = _cdx_get_with_retry(client, params)
+        if not rows or len(rows) < 2:
+            log.info("  %s [%d] → 0 rows", prefix, yr)
+            time.sleep(1.5)
+            continue
+        header, *data = rows
+        kept = []
+        for row in data:
+            rec = dict(zip(header, row))
+            original = rec.get("original", "")
+            if not _looks_like_article(original):
+                continue
+            kept.append(rec)
+        # Spread the chosen articles across the year by timestamp stride.
+        kept.sort(key=lambda r: r["timestamp"])
+        if len(kept) > max_per_year:
+            stride = len(kept) / max_per_year
+            kept = [kept[int(i * stride)] for i in range(max_per_year)]
+        by_year.setdefault(yr, []).extend(kept)
+        log.info("  %s [%d] → %d candidate articles (kept %d)",
+                 prefix, yr, len(data), len(kept))
+        time.sleep(1.5)
+
+    # Bin each result by publication year extracted from the URL path if
+    # possible — otherwise fall back to the CDX crawl-year. This avoids
+    # re-introducing the crawl-date binning bug that repair_manifest.py fixed.
+    _slug_year = re.compile(r"/(19[9]\d|20[0-2]\d)/")
+    results: list[dict] = []
+    for crawl_yr, recs in by_year.items():
+        for r in recs:
+            slug = _slug_year.search(r["original"])
+            pub_year = int(slug.group(1)) if slug else crawl_yr
+            results.append({
+                "year": pub_year,
+                "source_url": f"https://web.archive.org/web/{r['timestamp']}/{r['original']}",
+                "wayback_ts": r["timestamp"],
+                "original_url": r["original"],
+                "source": "wayback",
+            })
+    return results
+
 
 
 def cdx_snapshots(
@@ -510,6 +674,54 @@ def append_rows(rows: list[dict]) -> None:
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+def discover_early_prefix(
+    systems: list[str],
+    year_from: int,
+    year_to: int,
+    max_per_year: int = 25,
+) -> None:
+    """Resilient early-period discovery via known historical URL prefixes.
+
+    Reads EARLY_PREFIXES, queries one year at a time with retry+backoff,
+    streams new rows to manifest as it goes (timeout-resistant).
+    """
+    existing = load_existing_manifest()
+    log.info("Early-prefix discovery: systems=%s  years=%d-%d  max_per_year=%d",
+             systems, year_from, year_to, max_per_year)
+
+    with httpx.Client(headers=HEADERS, follow_redirects=True) as client:
+        for sys_key in systems:
+            prefixes = EARLY_PREFIXES.get(sys_key, [])
+            if not prefixes:
+                log.warning("No EARLY_PREFIXES for system=%s, skipping", sys_key)
+                continue
+            log.info("=== %s ===", SYSTEMS[sys_key]["full_name"])
+            for prefix in prefixes:
+                articles = cdx_prefix_articles(
+                    client, prefix, year_from, year_to, max_per_year
+                )
+                rows = []
+                for s in articles:
+                    if (s["source_url"],) in existing:
+                        continue
+                    rows.append({
+                        "system": sys_key,
+                        "year": s["year"],
+                        "doctype": "press_release",
+                        "source_url": s["source_url"],
+                        "source": "wayback",
+                        "wayback_ts": s.get("wayback_ts", ""),
+                        "discovered_at": _now(),
+                    })
+                    existing.add((s["source_url"],))
+                if rows:
+                    append_rows(rows)
+                    log.info("  %s: added %d new rows", prefix, len(rows))
+                time.sleep(2)
+
+    print_manifest_summary()
+
+
 def discover_early_boost(
     systems: list[str],
     year_from: int,
@@ -720,12 +932,22 @@ if __name__ == "__main__":
                         help="Just print existing manifest summary and exit")
     parser.add_argument("--early-boost", action="store_true",
                         help="Pull multiple article URLs per year from Wayback CDX (early period)")
+    parser.add_argument("--early-prefix", action="store_true",
+                        help="Resilient early-period discovery via EARLY_PREFIXES "
+                             "(uses matchType=prefix + per-year queries + retry/backoff)")
     parser.add_argument("--max-per-year", type=int, default=20,
-                        help="Max article snapshots per year when using --early-boost")
+                        help="Max article snapshots per year when using --early-boost/--early-prefix")
     args = parser.parse_args()
 
     if args.summary_only:
         print_manifest_summary()
+    elif args.early_prefix:
+        discover_early_prefix(
+            systems=args.systems,
+            year_from=args.year_from,
+            year_to=args.year_to,
+            max_per_year=args.max_per_year,
+        )
     elif args.early_boost:
         discover_early_boost(
             systems=args.systems,

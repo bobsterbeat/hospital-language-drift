@@ -17,6 +17,9 @@ package-lock.json
 # Logs
 run.log
 
+# Pre-repair manifest backup (git history is the source of truth)
+corpus/manifest.pre-repair.csv
+
 # macOS
 .DS_Store
 

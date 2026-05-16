@@ -92,6 +92,33 @@ def extract_pdf(data: bytes) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Publication date extraction from HTML metadata.
+# Order: article:published_time > JSON-LD datePublished > <time datetime>
+# > <meta name="publish-date"|"DC.date.issued"|"date">.
+# ---------------------------------------------------------------------------
+_META_DATE_PATTERNS = [
+    re.compile(r'<meta\s+[^>]*property=["\']article:published_time["\'][^>]*content=["\']([^"\']+)', re.I),
+    re.compile(r'<meta\s+[^>]*content=["\']([^"\']+)["\'][^>]*property=["\']article:published_time["\']', re.I),
+    re.compile(r'<meta\s+[^>]*itemprop=["\']datePublished["\'][^>]*content=["\']([^"\']+)', re.I),
+    re.compile(r'<meta\s+[^>]*name=["\'](?:publish-date|publishdate|DC\.date\.issued|date)["\'][^>]*content=["\']([^"\']+)', re.I),
+    re.compile(r'"datePublished"\s*:\s*"([^"]+)"'),    # JSON-LD
+    re.compile(r'<time[^>]*\sdatetime=["\']([^"\']+)', re.I),
+]
+_YEAR_IN_DATE = re.compile(r"\b(19[9]\d|20[0-3]\d)\b")
+
+
+def extract_pubdate_year(html: str) -> int | None:
+    """Pull a publication year out of common HTML metadata. Returns None if absent."""
+    for pat in _META_DATE_PATTERNS:
+        m = pat.search(html)
+        if m:
+            yr_match = _YEAR_IN_DATE.search(m.group(1))
+            if yr_match:
+                return int(yr_match.group(1))
+    return None
+
+
+# ---------------------------------------------------------------------------
 # Token count (simple word count, consistent with pipeline.py)
 # ---------------------------------------------------------------------------
 def token_count(text: str) -> int:
@@ -144,10 +171,13 @@ def extract_all(systems: list[str] | None = None) -> None:
         pdf_path  = parent / f"{stem}.pdf"
 
         text = ""
+        pub_year_html: int | None = None
         if pdf_path.exists():
             text = extract_pdf(pdf_path.read_bytes())
         elif html_path.exists():
-            text = extract_html(html_path.read_text(encoding="utf-8", errors="ignore"))
+            html_raw = html_path.read_text(encoding="utf-8", errors="ignore")
+            text = extract_html(html_raw)
+            pub_year_html = extract_pubdate_year(html_raw)
 
         if not text:
             skipped_short += 1
@@ -160,15 +190,16 @@ def extract_all(systems: list[str] | None = None) -> None:
             continue
 
         rows.append({
-            "system":       meta.get("system", "unknown"),
-            "year":         int(meta.get("year", 0)),
-            "doctype":      meta.get("doctype", "unknown"),
-            "source_url":   meta.get("url", ""),
-            "hash":         h,
-            "n_tokens":     n,
-            "text":         text,
-            "retrieved_at": meta.get("fetched_at",
-                                     datetime.now(timezone.utc).isoformat(timespec="seconds")),
+            "system":         meta.get("system", "unknown"),
+            "year":           int(meta.get("year", 0)),
+            "doctype":        meta.get("doctype", "unknown"),
+            "source_url":     meta.get("url", ""),
+            "hash":           h,
+            "n_tokens":       n,
+            "text":           text,
+            "pub_year_html":  pub_year_html,
+            "retrieved_at":   meta.get("fetched_at",
+                                       datetime.now(timezone.utc).isoformat(timespec="seconds")),
         })
 
     log.info(

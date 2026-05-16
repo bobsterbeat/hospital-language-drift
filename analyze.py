@@ -47,6 +47,33 @@ mpl.rcParams.update({
 # Load corpus
 # ---------------------------------------------------------------------------
 df = load_corpus()
+
+# Replace crawl-date `year` with publication-date `pub_year` from manifest.
+# The manifest was repaired by repair_manifest.py to add a pub_year column
+# (URL-slug year > HTML meta pubdate > crawl date as fallback).
+MANIFEST = Path("corpus/manifest.csv")
+if MANIFEST.exists() and "source_url" in df.columns and len(df) > 0:
+    manifest = pd.read_csv(MANIFEST, usecols=lambda c: c in
+                           {"source_url", "pub_year", "year_source"})
+    if "pub_year" in manifest.columns:
+        before = len(df)
+        df = df.merge(manifest[["source_url", "pub_year", "year_source"]],
+                      on="source_url", how="left")
+        n_matched = df["pub_year"].notna().sum()
+        # Use pub_year where available, fall back to original year
+        df["year"] = df["pub_year"].fillna(df["year"]).astype(int)
+        print(f"Manifest merge: {n_matched}/{before} rows got pub_year")
+    else:
+        print("WARNING: manifest has no pub_year column; run repair_manifest.py")
+
+# Restrict to the 2010-2025 study window. Pre-2010 docs (Stanford has ~50
+# articles from 2000-2009 that were previously mis-binned as 2014-2016 by
+# crawl date) must be excluded — they predate the study period.
+n_before = len(df)
+df = df[(df["year"] >= 2010) & (df["year"] <= 2025)].copy()
+if len(df) != n_before:
+    print(f"Study window filter: dropped {n_before - len(df)} pre-2010 / post-2025 docs")
+
 df["period"] = np.where(df["year"] <= 2016, "early (2010-2016)", "late (2017-2025)")
 print(f"Corpus: {len(df)} documents")
 print(df.groupby(["system", "period", "doctype"]).size().unstack(fill_value=0))
