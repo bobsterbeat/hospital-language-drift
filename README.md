@@ -131,7 +131,10 @@ Most significant term-level changes (Mann-Whitney, two-sided):
 
 ## Known gaps and next steps
 
-- **UCSF early coverage** — CDX for `www.ucsf.edu/news/*` consistently times out (too many archived snapshots). Fix: use UCSF's own sitemaps (`ucsf.edu/sitemap.xml`) to get article URLs, then look up each via the Wayback Availability API. Estimated 2 hours of work; would transform statistical confidence.
+- **Date-binning fix (resolved May 2026).** The original manifest binned documents by Wayback crawl date, not publication date — 120/125 URLs with parseable years were mis-binned by 1–14 years. [repair_manifest.py](repair_manifest.py) now adds a `pub_year` column (URL slug year > HTML `<meta>` pubdate > crawl date), and [analyze.py](analyze.py) filters to the 2010–2025 study window. Rerun the headline statistics after `git pull`.
+- **Early-period corpus expansion (in progress).** Discovery now uses historical URL prefixes per system (e.g. Michigan's pre-redesign `/News` with capital N, UCDavis's pre-rebrand `ucdmc.ucdavis.edu/publish/`, Duke's `dukehealth.org/blog/` before the move to `corporate.dukehealth.org`). Use `python discover.py --early-prefix --systems <name> --from 2010 --to 2016` to extend further. Current per-system early coverage: Stanford 91, UCDavis 145, Michigan 23, UCSF 7, Duke 13.
+- **Duke 2010–2015** still has no coverage. Pre-2014 Duke press releases likely lived under `dukemedicine.org/...` or `dukehealth.org/about-us/news/...`; needs probing.
+- **UCSF early coverage** — even after `--early-prefix`, UCSF early-period coverage remains thin (7 docs across 2010–2016). The next fix is sitemap-driven discovery: fetch archived `www.ucsf.edu/sitemap.xml` snapshots, parse article URLs, then look up each via the Wayback Availability API.
 - **Form 990 narratives** — ProPublica blocks automated download. IRS bulk XML files at `irs.gov/statistics/soi-tax-stats` include Schedule O text back to 2012 and are freely downloadable.
 - **Bond official statements (MSRB EMMA)** — the highest-priority document type for operational language detection; not yet collected.
 - **Verbatim quote pairs** — pulling 5–10 side-by-side examples of actual sentences containing "compassion" (2012) and their absence (2024) would make the finding concrete for publication.
@@ -140,7 +143,8 @@ Most significant term-level changes (Mann-Whitney, two-sided):
 
 ## Limitations
 
-- The early-period corpus is thin (43 documents across five systems). UCSF dominates the late corpus (422 of 487 late documents).
+- **Headline figures are pre-fix.** The "58% decline" and "+11.05/year × category interaction" quoted above were computed before the date-binning repair. After running `repair_manifest.py` and `analyze.py` against the updated corpus, the numbers will change — direction expected the same (likely stronger, since mis-binning attenuated the trend), but cite the regenerated `report/model_results.txt` rather than this README until it's been refreshed.
+- **System balance** has improved substantially: UCSF was 81% of the press-release corpus; it is now 53% in the 2010–2025 window after the early-period expansion. Mixed-effects model retains system as a random intercept either way.
 - The study measures public communications language, not clinical language or culture. Cause of the shift is unknown.
 - Term dictionaries were constructed by a single researcher. Formal inter-rater reliability testing has not been conducted.
 - Form 990s, bond statements, and strategic plans are largely absent from the current corpus.

@@ -109,6 +109,7 @@ EARLY_PREFIXES: dict[str, list[str]] = {
         "labblog.uofmhealth.org/",
     ],
     "duke": [
+        "www.dukehealth.org/health_library/news/",   # 2010-2013 Duke Health news
         "dukehealth.org/about/news",
         "dukehealth.org/blog/",
         "corporate.dukehealth.org/news/",
