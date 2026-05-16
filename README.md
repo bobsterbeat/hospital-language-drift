@@ -2,6 +2,10 @@
 
 **Quantifying the disappearance of humanistic vocabulary in US academic medical centre communications, 2010–2025.**
 
+![Relational vocabulary rate per 10,000 tokens across five US academic medical centres, 2010–2025](report/figure_timeseries_main.png)
+
+*Relational vocabulary (compassion, healing, bedside, dignity, suffering, empathy, …) per 10,000 tokens across five US academic medical centres, 2010–2025. Mean decline: 58%; year × category interaction p < 0.001.*
+
 A corpus linguistics study of 530 press releases from five institutions — UC Davis Health, UCSF, Stanford Health Care / Stanford Medicine, Duke Health, and Michigan Medicine — measuring whether public institutional language has shifted from relational to operational over fifteen years.
 
 ---
@@ -151,6 +155,8 @@ Aldwinckle, R. (2026). *Hospital language drift: quantifying the decline of huma
 
 ## Licence
 
-Code: MIT  
-`corpus/manifest.csv` and `report/` outputs: CC BY 4.0 (attribution required)  
-Raw fetched documents: not included; original content belongs to respective institutions
+- **Code** (all `.py`, `.js`, configuration): [MIT](LICENSE)
+- **Data, figures, tables, and prose** (`corpus/manifest.csv`, `report/`, this README): [CC BY 4.0](LICENSE-DATA) — attribution required
+- **Raw fetched documents** (`corpus/raw/`, not committed): original content belongs to the respective institutions and is not redistributed here
+
+If you use this work, please cite via the [CITATION.cff](CITATION.cff) file (GitHub's "Cite this repository" button) or the citation block above.

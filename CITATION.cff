@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this dataset, code, or findings, please cite as below."
+title: "Hospital Language Drift: quantifying the decline of humanistic vocabulary in US academic medical centre communications, 2010–2025"
+type: dataset
+authors:
+  - family-names: Aldwinckle
+    given-names: Rob
+abstract: >-
+  A corpus linguistics study of 530 press releases from five US academic
+  medical centres (UC Davis Health, UCSF, Stanford Health Care / Stanford
+  Medicine, Duke Health, Michigan Medicine), measuring whether public
+  institutional language shifted from relational to operational vocabulary
+  between 2010 and 2025. Relational vocabulary declined 58% on average
+  between the early (2010–2016) and late (2017–2025) periods; a mixed-effects
+  model found a year × category interaction of +11.05 per year (SE 1.43,
+  p < 0.001). Comparison against Google Books Ngrams confirms the effect is
+  healthcare-specific.
+keywords:
+  - corpus-linguistics
+  - clinical-nlp
+  - healthcare-communication
+  - text-analysis
+  - mixed-effects-models
+  - academic-medical-centres
+  - python
+license: MIT
+license-url: https://github.com/bobsterbeat/hospital-language-drift/blob/main/LICENSE
+repository-code: "https://github.com/bobsterbeat/hospital-language-drift"
+url: "https://github.com/bobsterbeat/hospital-language-drift"
+year: 2026
