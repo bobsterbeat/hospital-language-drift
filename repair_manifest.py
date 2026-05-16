@@ -28,18 +28,32 @@ MANIFEST = ROOT / "corpus" / "manifest.csv"
 BACKUP   = ROOT / "corpus" / "manifest.pre-repair.csv"
 PARQUET  = ROOT / "corpus" / "clean" / "documents.parquet"
 
-# Match /YYYY/MM/ or /YYYY/ in an article path. Restrict to 1995-2025.
-YEAR_PATH_RE = re.compile(r"/(?:19[9]\d|20[0-2]\d)/(?:0?[1-9]|1[0-2])?/?[a-z0-9-]")
-YEAR_EXTRACT = re.compile(r"/(19[9]\d|20[0-2]\d)/")
+# Match a 4-digit year either between slashes (/2011/) or at the end of a path
+# segment (/News/07/22/2010 → 2010). Restrict to 1995-2025.
+YEAR_EXTRACT = re.compile(r"(?:^|/)(19[9]\d|20[0-2]\d)(?=/|$|[?#])")
 
-# Drop these patterns — they are index pages or interaction widgets, not articles.
+# Drop these patterns — they are index pages, interaction widgets, asset
+# files, or author-listing pages, not articles.
 NON_ARTICLE_PATTERNS = re.compile(
-    r"(?:/comments/archives/[^/]+/?$"          # category index page
-    r"|/submit[-_]comments?"                    # comment-submission form
-    r"|/share[-_]your[-_]thou"                  # comment template
-    r"|/comments/archives/\d{4}/\d{1,2}/?$)",   # year/month index, no slug
+    r"(?:/comments/archives/[^/]+/?$"           # blog category index
+    r"|/submit[-_]comments?"                     # comment-submission form
+    r"|/share[-_]your[-_]thou"                   # comment template
+    r"|/comments/archives/\d{4}/\d{1,2}/?$"      # year/month index, no slug
+    r"|/author/[^/]+/?$"                         # author listing page
+    r"|/tag/[^/]+/?$"                            # tag listing page
+    r"|\.js(?:\?|$)"                             # JavaScript asset
+    r"|\.css(?:\?|$)"                            # stylesheet
+    r"|/(?:rss|feed|atom)(?:\.xml)?/?$"          # RSS/atom feed
+    r"|/sitemap.*\.xml"                          # sitemap files
+    r"|//?(?:\?|$)"                              # bare-domain or empty path
+    r"|/wp-(?:admin|content|includes)/"          # WordPress admin/asset paths
+    r")",
     re.IGNORECASE,
 )
+
+
+# Reject root-domain Wayback URLs like .../corporate.dukehealth.org/ (no article)
+_BARE_DOMAIN_RE = re.compile(r"web/\d+/https?://[^/]+/?$")
 
 
 def extract_url_year(url: str) -> int | None:
@@ -56,7 +70,11 @@ def extract_url_year(url: str) -> int | None:
 
 
 def is_non_article(url: str) -> bool:
-    return bool(NON_ARTICLE_PATTERNS.search(url))
+    if NON_ARTICLE_PATTERNS.search(url):
+        return True
+    if _BARE_DOMAIN_RE.search(url):
+        return True
+    return False
 
 
 def load_html_pubyears() -> dict[str, int]:

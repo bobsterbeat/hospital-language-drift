@@ -280,16 +280,19 @@ def cdx_prefix_articles(
         time.sleep(1.5)
 
     # Bin each result by publication year extracted from the URL path if
-    # possible — otherwise fall back to the CDX crawl-year. This avoids
-    # re-introducing the crawl-date binning bug that repair_manifest.py fixed.
-    _slug_year = re.compile(r"/(19[9]\d|20[0-2]\d)/")
+    # possible — otherwise fall back to the CDX crawl-year. Matches /YYYY/
+    # or /YYYY at end of segment (e.g., /News/07/22/2010).
+    _slug_year = re.compile(r"(?:^|/)(19[9]\d|20[0-2]\d)(?=/|$|[?#])")
     results: list[dict] = []
     for crawl_yr, recs in by_year.items():
         for r in recs:
             slug = _slug_year.search(r["original"])
             pub_year = int(slug.group(1)) if slug else crawl_yr
+            year_source = "url_slug" if slug else "crawl_date"
             results.append({
                 "year": pub_year,
+                "pub_year": pub_year,
+                "year_source": year_source,
                 "source_url": f"https://web.archive.org/web/{r['timestamp']}/{r['original']}",
                 "wayback_ts": r["timestamp"],
                 "original_url": r["original"],
@@ -648,7 +651,7 @@ def emma_bond_statements(
 # Manifest builder
 # ---------------------------------------------------------------------------
 MANIFEST_COLS = ["system", "year", "doctype", "source_url", "source",
-                 "wayback_ts", "discovered_at"]
+                 "wayback_ts", "discovered_at", "pub_year", "year_source"]
 
 
 def load_existing_manifest() -> set[tuple]:
@@ -712,6 +715,8 @@ def discover_early_prefix(
                         "source": "wayback",
                         "wayback_ts": s.get("wayback_ts", ""),
                         "discovered_at": _now(),
+                        "pub_year": s.get("pub_year", s["year"]),
+                        "year_source": s.get("year_source", "crawl_date"),
                     })
                     existing.add((s["source_url"],))
                 if rows:
