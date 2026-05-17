@@ -1,0 +1,51 @@
+id,term,classification
+1,healing,relational
+2,alignment,operational
+3,enterprise,operational
+4,operational excellence,operational
+5,optimization,operational
+6,innovation,neither
+7,bedside,relational
+8,performance,operational
+9,nurse,relational
+10,productivity,operational
+11,professionalism,relational
+12,deliverable,operational
+13,efficiency,operational
+14,utilization,operational
+15,empathy,relational
+16,suffering,relational
+17,standardization,operational
+18,care,relational
+19,patient-centered,relational
+20,patient flow,operational
+21,protocol,neither
+22,consumer,operational
+23,trust,relational
+24,specialist,neither
+25,presence,relational
+26,clinical judgment,relational
+27,physician,relational
+28,transformation,operational
+29,leverage,operational
+30,treatment,neither
+31,partnership,neither
+32,dignity,relational
+33,relationship,relational
+34,diagnosis,neither
+35,lean,operational
+36,recovery,neither
+37,community,neither
+38,capacity,operational
+39,compassion,relational
+40,comfort,relational
+41,workflow,operational
+42,listen,relational
+43,dashboard,operational
+44,kpi,operational
+45,six sigma,operational
+46,scalable,operational
+47,stakeholder,operational
+48,throughput,operational
+49,metrics,operational
+50,kindness,relational
