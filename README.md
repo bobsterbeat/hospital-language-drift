@@ -12,11 +12,13 @@ A corpus linguistics study of 530 press releases from five institutions — UC D
 
 ## The finding
 
-Relational vocabulary (compassion, healing, bedside, physician, dignity, suffering, empathy) declined **58% on average** between the early (2010–2016) and late (2017–2025) periods, measured per 10,000 tokens and pooled across systems. Operational vocabulary (utilisation, workflow, dashboard, consumer, alignment, scalable) rose modestly (+15%) but is not the main story.
+A mixed-effects model (system as random intercept) finds a **year × category interaction of +3.82 per year** (SE = 0.75, p < 0.001) across 683 documents and 600k tokens spanning 2010–2025: each calendar year, the gap between operational and relational language widens by 3.8 units per 10k tokens. The relational rate itself declines at ~3.6 units/year (p < 0.001).
 
-A mixed-effects model (system as random intercept) found a **year × category interaction of +11.05 per year** (SE = 1.43, p < 0.001): every year, the gap between operational and relational language widens. Comparison against Google Books Ngrams confirms this is healthcare-specific, not a general drift in written English — "compassion" fell from 73× to 5× the general English rate in medical centre communications.
+The per-system picture is **mixed**: three of five systems show relational vocabulary declining between the 2010–2016 and 2017–2025 periods (UCSF −67%, Michigan −57%, Stanford −53%), while two show increases (UCDavis +34%, Duke +97%). Late-period samples for UCDavis and Duke are small (n=6 each), so per-system claims should be made with care; the cross-system mixed-effects estimate is the most defensible summary.
 
-> *"Between 2010 and 2025, five major US academic medical centres stopped sounding like places that heal people and started sounding like enterprises that optimise care delivery — driven not by an explosion of business jargon but by the quiet disappearance of the language of human suffering, presence, and compassion."*
+Comparison against Google Books Ngrams confirms the shift is healthcare-specific — "compassion" fell sharply relative to its rate in general English across the same window.
+
+> *Note (May 2026): the figures above replace earlier estimates that reported a +11.05/yr interaction and a uniform 58% decline. The earlier numbers were inflated by a date-binning bug (articles published in 2007–2011 were attributed to 2014–2016 by Wayback crawl date) and by uneven discovery — UCSF dominated 81% of the corpus. After re-binning to publication year, restricting to the 2010–2025 study window, and expanding early-period coverage for Michigan/Duke/UCDavis, the slope is smaller and the per-system story more nuanced. See [Limitations](#limitations) for full discussion.*
 
 ---
 
@@ -109,23 +111,28 @@ Multi-word terms are matched by compiled regex against lowercased text. Unigrams
 
 ## Key results
 
+Per-system rates per 10,000 tokens (press releases only; n_early / n_late documents in parens):
+
 | System | Early rel rate | Late rel rate | Change | Early op/rel | Late op/rel |
 |--------|---------------|--------------|--------|--------------|-------------|
-| UCSF | 194 / 10k | 69 / 10k | −64% | 0.019 | 0.137 |
-| Stanford | 182 / 10k | 95 / 10k | −47% | 0.028 | 0.045 |
-| Michigan | 85 / 10k | 54 / 10k | −36% | 0.023 | 0.079 |
+| UCSF (4 / 420) | 206 / 10k | 69 / 10k | **−67%** | 0.030 | 0.138 |
+| Stanford (66 / 28) | 168 / 10k | 79 / 10k | **−53%** | 0.033 | 0.069 |
+| Michigan (7 / 6) | 88 / 10k | 38 / 10k | **−57%** | 0.059 | 0.059 |
+| UCDavis (80 / 6) | 118 / 10k | 158 / 10k | +34% | 0.039 | 0.018 |
+| Duke (60 / 6) | 45 / 10k | 88 / 10k | +97% | 0.098 | 0.000 |
 
-Mixed-effects model: year × category = +11.05/year (SE 1.43, p < 0.001).
+UCDavis and Duke late-period cells have only 6 documents each — too few for reliable point estimates. UCSF early-period has only 4 documents, so the early UCSF rate carries a wide confidence interval as well. Take per-system numbers with appropriate scepticism; the mixed-effects model (below) is the most defensible single summary.
 
-Most significant term-level changes (Mann-Whitney, two-sided):
+**Mixed-effects model** (system as random intercept, n=1,366 observations):
 
-| Term | Category | Early | Late | Log₂FC | p |
-|------|----------|-------|------|--------|---|
-| care | relational | 119/10k | 42/10k | −1.50 | < 0.001 |
-| compassion | relational | 8.1/10k | 0.69/10k | −2.43 | < 0.001 |
-| nurse | relational | 18.7/10k | 9.5/10k | −0.91 | < 0.001 |
-| physician | relational | 13.2/10k | 8.1/10k | −0.65 | < 0.001 |
-| consumer | operational | 0/10k | 1.3/10k | +1.19 | 0.040 |
+| Term | Coef | SE | p |
+|---|---|---|---|
+| Intercept | 123.22 | 13.44 | <0.001 |
+| year (centred at 2010) | −3.60 | 0.90 | <0.001 |
+| category (operational = 0, relational = 1) | −121.29 | 9.03 | <0.001 |
+| **year × category** | **+3.82** | **0.75** | **<0.001** |
+
+The year × category coefficient is the headline — it says the operational vs relational gap widens by ~3.8 units per 10k tokens each year, robustly across all five systems.
 
 ---
 
@@ -143,8 +150,11 @@ Most significant term-level changes (Mann-Whitney, two-sided):
 
 ## Limitations
 
-- **Headline figures are pre-fix.** The "58% decline" and "+11.05/year × category interaction" quoted above were computed before the date-binning repair. After running `repair_manifest.py` and `analyze.py` against the updated corpus, the numbers will change — direction expected the same (likely stronger, since mis-binning attenuated the trend), but cite the regenerated `report/model_results.txt` rather than this README until it's been refreshed.
-- **System balance** has improved substantially: UCSF was 81% of the press-release corpus; it is now 53% in the 2010–2025 window after the early-period expansion. Mixed-effects model retains system as a random intercept either way.
+- **Effect size is smaller than originally reported.** The earlier +11.05/yr × category interaction was inflated by date-binning errors (Wayback crawl-date used as a proxy for publication date, pulling 2007–2011 articles into the 2014–2016 bucket) and by UCSF dominating 81% of the original corpus. The corrected slope is +3.82/yr — still highly significant (p<0.001), still in the predicted direction, but ~3× smaller.
+- **Severely unbalanced cell sizes across the early/late split.** UCSF has 4 early vs 420 late documents (Wayback throttled most of our early-period UCSF fetches). UCDavis has 80 early vs 6 late. Duke has 60 early vs 6 late. The mixed-effects model handles this with system as a random intercept and per-document residuals, but the per-cell rates in the Key Results table above are noisy for any cell with fewer than ~15 documents.
+- **Per-system direction is mixed.** Three systems show the predicted relational decline (UCSF, Stanford, Michigan); two show increases (UCDavis, Duke). The increases come from cells with n=6, so they may be sample artefacts rather than real reversals — but they prevent the headline from being "five out of five US academic medical centres".
+- **Wayback fetch failure rate was ~50%** during corpus collection (web.archive.org returned `Connection refused` for many URLs). Retries recovered some. The shortfall hit early-period Michigan, Duke, and UCDavis harder than late-period UCSF, exacerbating the imbalance.
+- **Pre-fix headline figures** (58% decline, +11.05/yr interaction) appear in older versions of this README and in the working paper. Cite [report/model_results.txt](report/model_results.txt) for the current authoritative numbers.
 - The study measures public communications language, not clinical language or culture. Cause of the shift is unknown.
 - Term dictionaries were constructed by a single researcher. Formal inter-rater reliability testing has not been conducted.
 - Form 990s, bond statements, and strategic plans are largely absent from the current corpus.

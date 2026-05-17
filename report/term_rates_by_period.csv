@@ -1,85 +1,85 @@
 category,term,period,count,tokens,rate_per_10k
-operational,alignment,early (2010-2016),0,41780,0.0
-operational,alignment,late (2017-2025),6,419703,0.1429582347517173
-operational,capacity,early (2010-2016),2,41780,0.47869794159885115
-operational,capacity,late (2017-2025),34,419703,0.8100966635930646
-operational,consumer,early (2010-2016),0,41780,0.0
-operational,consumer,late (2017-2025),54,419703,1.2866241127654556
-operational,dashboard,early (2010-2016),0,41780,0.0
-operational,dashboard,late (2017-2025),3,419703,0.07147911737585864
-operational,deliverable,early (2010-2016),0,41780,0.0
-operational,deliverable,late (2017-2025),0,419703,0.0
-operational,efficiency,early (2010-2016),2,41780,0.47869794159885115
-operational,efficiency,late (2017-2025),30,419703,0.7147911737585865
-operational,enterprise,early (2010-2016),4,41780,0.9573958831977023
-operational,enterprise,late (2017-2025),20,419703,0.4765274491723909
-operational,kpi,early (2010-2016),0,41780,0.0
-operational,kpi,late (2017-2025),0,419703,0.0
-operational,lean,early (2010-2016),0,41780,0.0
-operational,lean,late (2017-2025),0,419703,0.0
-operational,leverage,early (2010-2016),2,41780,0.47869794159885115
-operational,leverage,late (2017-2025),32,419703,0.7624439186758255
-operational,metrics,early (2010-2016),0,41780,0.0
-operational,metrics,late (2017-2025),4,419703,0.09530548983447819
-operational,operational excellence,early (2010-2016),0,41780,0.0
-operational,operational excellence,late (2017-2025),1,419703,0.023826372458619547
-operational,optimization,early (2010-2016),1,41780,0.23934897079942558
-operational,optimization,late (2017-2025),23,419703,0.5480065665482496
-operational,patient flow,early (2010-2016),0,41780,0.0
-operational,patient flow,late (2017-2025),0,419703,0.0
-operational,performance,early (2010-2016),3,41780,0.7180469123982767
-operational,performance,late (2017-2025),43,419703,1.0245340157206406
-operational,productivity,early (2010-2016),0,41780,0.0
-operational,productivity,late (2017-2025),2,419703,0.047652744917239094
-operational,scalable,early (2010-2016),0,41780,0.0
-operational,scalable,late (2017-2025),12,419703,0.2859164695034346
-operational,six sigma,early (2010-2016),0,41780,0.0
-operational,six sigma,late (2017-2025),0,419703,0.0
-operational,stakeholder,early (2010-2016),1,41780,0.23934897079942558
-operational,stakeholder,late (2017-2025),7,419703,0.16678460721033683
-operational,standardization,early (2010-2016),1,41780,0.23934897079942558
-operational,standardization,late (2017-2025),2,419703,0.047652744917239094
-operational,throughput,early (2010-2016),0,41780,0.0
-operational,throughput,late (2017-2025),5,419703,0.11913186229309773
-operational,transformation,early (2010-2016),6,41780,1.4360938247965533
-operational,transformation,late (2017-2025),75,419703,1.786977934396466
-operational,utilization,early (2010-2016),0,41780,0.0
-operational,utilization,late (2017-2025),15,419703,0.35739558687929324
-operational,workflow,early (2010-2016),0,41780,0.0
-operational,workflow,late (2017-2025),2,419703,0.047652744917239094
-relational,bedside,early (2010-2016),2,41780,0.47869794159885115
-relational,bedside,late (2017-2025),33,419703,0.786270291134445
-relational,care,early (2010-2016),497,41780,118.9564384873145
-relational,care,late (2017-2025),1743,419703,41.52936719537387
-relational,clinical judgment,early (2010-2016),0,41780,0.0
-relational,clinical judgment,late (2017-2025),2,419703,0.047652744917239094
-relational,comfort,early (2010-2016),4,41780,0.9573958831977023
-relational,comfort,late (2017-2025),30,419703,0.7147911737585865
-relational,compassion,early (2010-2016),34,41780,8.13786500718047
-relational,compassion,late (2017-2025),29,419703,0.6909648012999668
-relational,dignity,early (2010-2016),0,41780,0.0
-relational,dignity,late (2017-2025),14,419703,0.33356921442067367
-relational,empathy,early (2010-2016),0,41780,0.0
-relational,empathy,late (2017-2025),17,419703,0.4050483317965323
-relational,healing,early (2010-2016),19,41780,4.547630445189085
-relational,healing,late (2017-2025),125,419703,2.9782965573274436
-relational,kindness,early (2010-2016),10,41780,2.3934897079942554
-relational,kindness,late (2017-2025),83,419703,1.9775889140654224
-relational,listen,early (2010-2016),5,41780,1.1967448539971277
-relational,listen,late (2017-2025),65,419703,1.5487142098102706
-relational,nurse,early (2010-2016),78,41780,18.669219722355194
-relational,nurse,late (2017-2025),398,419703,9.48289623853058
-relational,patient-centered,early (2010-2016),2,41780,0.47869794159885115
-relational,patient-centered,late (2017-2025),26,419703,0.6194856839241082
-relational,physician,early (2010-2016),55,41780,13.164193393968405
-relational,physician,late (2017-2025),338,419703,8.053313891013406
-relational,presence,early (2010-2016),0,41780,0.0
-relational,presence,late (2017-2025),0,419703,0.0
-relational,professionalism,early (2010-2016),0,41780,0.0
-relational,professionalism,late (2017-2025),2,419703,0.047652744917239094
-relational,relationship,early (2010-2016),2,41780,0.47869794159885115
-relational,relationship,late (2017-2025),62,419703,1.477235092434412
-relational,suffering,early (2010-2016),7,41780,1.675442795595979
-relational,suffering,late (2017-2025),37,419703,0.8815757809689233
-relational,trust,early (2010-2016),0,41780,0.0
-relational,trust,late (2017-2025),59,419703,1.4057559750585533
+operational,alignment,early (2010-2016),1,197894,0.05053210304506453
+operational,alignment,late (2017-2025),5,402316,0.12428041638910707
+operational,capacity,early (2010-2016),15,197894,0.757981545675968
+operational,capacity,late (2017-2025),34,402316,0.8451068314459281
+operational,consumer,early (2010-2016),6,197894,0.3031926182703872
+operational,consumer,late (2017-2025),54,402316,1.3422284970023564
+operational,dashboard,early (2010-2016),1,197894,0.05053210304506453
+operational,dashboard,late (2017-2025),3,402316,0.07456824983346425
+operational,deliverable,early (2010-2016),0,197894,0.0
+operational,deliverable,late (2017-2025),0,402316,0.0
+operational,efficiency,early (2010-2016),11,197894,0.5558531334957099
+operational,efficiency,late (2017-2025),30,402316,0.7456824983346424
+operational,enterprise,early (2010-2016),4,197894,0.20212841218025812
+operational,enterprise,late (2017-2025),16,402316,0.3976973324451426
+operational,kpi,early (2010-2016),0,197894,0.0
+operational,kpi,late (2017-2025),0,402316,0.0
+operational,lean,early (2010-2016),0,197894,0.0
+operational,lean,late (2017-2025),0,402316,0.0
+operational,leverage,early (2010-2016),4,197894,0.20212841218025812
+operational,leverage,late (2017-2025),32,402316,0.7953946648902852
+operational,metrics,early (2010-2016),1,197894,0.05053210304506453
+operational,metrics,late (2017-2025),4,402316,0.09942433311128565
+operational,operational excellence,early (2010-2016),0,197894,0.0
+operational,operational excellence,late (2017-2025),1,402316,0.024856083277821413
+operational,optimization,early (2010-2016),4,197894,0.20212841218025812
+operational,optimization,late (2017-2025),23,402316,0.5716899153898926
+operational,patient flow,early (2010-2016),0,197894,0.0
+operational,patient flow,late (2017-2025),0,402316,0.0
+operational,performance,early (2010-2016),13,197894,0.6569173395858389
+operational,performance,late (2017-2025),38,402316,0.9445311645572138
+operational,productivity,early (2010-2016),3,197894,0.1515963091351936
+operational,productivity,late (2017-2025),2,402316,0.049712166555642825
+operational,scalable,early (2010-2016),1,197894,0.05053210304506453
+operational,scalable,late (2017-2025),12,402316,0.298272999333857
+operational,six sigma,early (2010-2016),0,197894,0.0
+operational,six sigma,late (2017-2025),0,402316,0.0
+operational,stakeholder,early (2010-2016),1,197894,0.05053210304506453
+operational,stakeholder,late (2017-2025),7,402316,0.1739925829447499
+operational,standardization,early (2010-2016),3,197894,0.1515963091351936
+operational,standardization,late (2017-2025),2,402316,0.049712166555642825
+operational,throughput,early (2010-2016),0,197894,0.0
+operational,throughput,late (2017-2025),5,402316,0.12428041638910707
+operational,transformation,early (2010-2016),23,197894,1.1622383700364842
+operational,transformation,late (2017-2025),74,402316,1.8393501625587847
+operational,utilization,early (2010-2016),7,197894,0.3537247213154517
+operational,utilization,late (2017-2025),15,402316,0.3728412491673212
+operational,workflow,early (2010-2016),0,197894,0.0
+operational,workflow,late (2017-2025),2,402316,0.049712166555642825
+relational,bedside,early (2010-2016),3,197894,0.1515963091351936
+relational,bedside,late (2017-2025),33,402316,0.8202507481681066
+relational,care,early (2010-2016),1429,197894,72.21037525139721
+relational,care,late (2017-2025),1595,402316,39.64545282812516
+relational,clinical judgment,early (2010-2016),0,197894,0.0
+relational,clinical judgment,late (2017-2025),2,402316,0.049712166555642825
+relational,comfort,early (2010-2016),6,197894,0.3031926182703872
+relational,comfort,late (2017-2025),28,402316,0.6959703317789996
+relational,compassion,early (2010-2016),68,197894,3.436183007064388
+relational,compassion,late (2017-2025),24,402316,0.596545998667714
+relational,dignity,early (2010-2016),1,197894,0.05053210304506453
+relational,dignity,late (2017-2025),14,402316,0.3479851658894998
+relational,empathy,early (2010-2016),0,197894,0.0
+relational,empathy,late (2017-2025),17,402316,0.42255341572296407
+relational,healing,early (2010-2016),45,197894,2.273944637027904
+relational,healing,late (2017-2025),120,402316,2.9827299933385696
+relational,kindness,early (2010-2016),26,197894,1.3138346791716777
+relational,kindness,late (2017-2025),83,402316,2.0630549120591772
+relational,listen,early (2010-2016),14,197894,0.7074494426309034
+relational,listen,late (2017-2025),63,402316,1.5659332465027491
+relational,nurse,early (2010-2016),252,197894,12.734089967356262
+relational,nurse,late (2017-2025),363,402316,9.022758229849174
+relational,patient-centered,early (2010-2016),7,197894,0.3537247213154517
+relational,patient-centered,late (2017-2025),26,402316,0.6462581652233568
+relational,physician,early (2010-2016),373,197894,18.84847443580907
+relational,physician,late (2017-2025),301,402316,7.481681066624246
+relational,presence,early (2010-2016),0,197894,0.0
+relational,presence,late (2017-2025),0,402316,0.0
+relational,professionalism,early (2010-2016),1,197894,0.05053210304506453
+relational,professionalism,late (2017-2025),2,402316,0.049712166555642825
+relational,relationship,early (2010-2016),14,197894,0.7074494426309034
+relational,relationship,late (2017-2025),61,402316,1.5162210799471063
+relational,suffering,early (2010-2016),42,197894,2.1223483278927104
+relational,suffering,late (2017-2025),35,402316,0.8699629147237495
+relational,trust,early (2010-2016),3,197894,0.1515963091351936
+relational,trust,late (2017-2025),57,402316,1.4167967468358207
