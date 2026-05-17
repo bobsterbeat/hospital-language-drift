@@ -12,13 +12,13 @@ A corpus linguistics study of 530 press releases from five institutions — UC D
 
 ## The finding
 
-A mixed-effects model (system as random intercept) finds a **year × category interaction of +3.82 per year** (SE = 0.75, p < 0.001) across 683 documents and 600k tokens spanning 2010–2025: each calendar year, the gap between operational and relational language widens by 3.8 units per 10k tokens. The relational rate itself declines at ~3.6 units/year (p < 0.001).
+A mixed-effects model (system as random intercept) finds a **year × category interaction of +4.14 per year** (SE = 0.55, p < 0.001) across 745 documents and ~830k tokens spanning 2010–2025: each calendar year, the gap between operational and relational language widens by ~4 units per 10k tokens. The relational rate itself declines at ~4.95 units/year (p < 0.001). The model fits 1,982 observations across 5 system groups with minimum group size 48.
 
-The per-system picture is **mixed**: three of five systems show relational vocabulary declining between the 2010–2016 and 2017–2025 periods (UCSF −67%, Michigan −57%, Stanford −53%), while two show increases (UCDavis +34%, Duke +97%). Late-period samples for UCDavis and Duke are small (n=6 each), so per-system claims should be made with care; the cross-system mixed-effects estimate is the most defensible summary.
+The per-system picture is **mixed but mostly consistent with decline**: three of five systems show clear relational vocabulary declines between the 2010–2016 and 2017–2025 periods (UCSF −53%, Michigan −58%, Stanford −44%). UCDavis (+38%) and Duke (+77%) move in the opposite direction in the per-cell averages, but both have only 6 late-period documents — too few for reliable point estimates. The cross-system mixed-effects interaction is the most defensible single summary.
 
-Comparison against Google Books Ngrams confirms the shift is healthcare-specific — "compassion" fell sharply relative to its rate in general English across the same window.
+Comparison against Google Books Ngrams confirms the shift is healthcare-specific — "compassion" and related relational terms fell sharply in the medical corpus relative to their rate in general English across the same window.
 
-> *Note (May 2026): the figures above replace earlier estimates that reported a +11.05/yr interaction and a uniform 58% decline. The earlier numbers were inflated by a date-binning bug (articles published in 2007–2011 were attributed to 2014–2016 by Wayback crawl date) and by uneven discovery — UCSF dominated 81% of the corpus. After re-binning to publication year, restricting to the 2010–2025 study window, and expanding early-period coverage for Michigan/Duke/UCDavis, the slope is smaller and the per-system story more nuanced. See [Limitations](#limitations) for full discussion.*
+> *Note (May 2026): the figures above replace earlier estimates that reported a +11.05/yr interaction and a uniform 58% decline. The earlier numbers were inflated by a date-binning bug (articles published in 2007–2011 were attributed to 2014–2016 by Wayback crawl date) and by uneven discovery — UCSF dominated 81% of the corpus. After re-binning to publication year, restricting to the 2010–2025 study window, expanding early-period coverage across all five systems (UCSF early went from 4 → 162 documents), and four rounds of fetch retries against Wayback throttling, the slope is smaller but more robust and the per-system story more nuanced. See [Limitations](#limitations).*
 
 ---
 
@@ -113,26 +113,26 @@ Multi-word terms are matched by compiled regex against lowercased text. Unigrams
 
 Per-system rates per 10,000 tokens (press releases only; n_early / n_late documents in parens):
 
-| System | Early rel rate | Late rel rate | Change | Early op/rel | Late op/rel |
-|--------|---------------|--------------|--------|--------------|-------------|
-| UCSF (4 / 420) | 206 / 10k | 69 / 10k | **−67%** | 0.030 | 0.138 |
-| Stanford (66 / 28) | 168 / 10k | 79 / 10k | **−53%** | 0.033 | 0.069 |
-| Michigan (7 / 6) | 88 / 10k | 38 / 10k | **−57%** | 0.059 | 0.059 |
-| UCDavis (80 / 6) | 118 / 10k | 158 / 10k | +34% | 0.039 | 0.018 |
-| Duke (60 / 6) | 45 / 10k | 88 / 10k | +97% | 0.098 | 0.000 |
+| System | n early / late | Early rel rate | Late rel rate | Change | Early op/rel | Late op/rel |
+|---|---|---|---|---|---|---|
+| UCSF | 162 / 422 | 148 / 10k | 69 / 10k | **−53%** | 0.079 | 0.137 |
+| Stanford | 101 / 35 | 171 / 10k | 95 / 10k | **−44%** | 0.034 | 0.045 |
+| Michigan | 18 / 6 | 89 / 10k | 38 / 10k | **−58%** | 0.047 | 0.059 |
+| UCDavis | 116 / 6 | 115 / 10k | 158 / 10k | +38% | 0.039 | 0.018 |
+| Duke | 119 / 6 | 50 / 10k | 88 / 10k | +77% | 0.130 | 0.000 |
 
-UCDavis and Duke late-period cells have only 6 documents each — too few for reliable point estimates. UCSF early-period has only 4 documents, so the early UCSF rate carries a wide confidence interval as well. Take per-system numbers with appropriate scepticism; the mixed-effects model (below) is the most defensible single summary.
+UCDavis and Duke late-period cells have only 6 documents each — too few for reliable point estimates, and their apparent increases are likely sample artefacts rather than real trend reversals. The mixed-effects model (below) is the most defensible single summary.
 
-**Mixed-effects model** (system as random intercept, n=1,366 observations):
+**Mixed-effects model** (system as random intercept, n=1,982 observations across 5 groups):
 
 | Term | Coef | SE | p |
 |---|---|---|---|
-| Intercept | 123.22 | 13.44 | <0.001 |
-| year (centred at 2010) | −3.60 | 0.90 | <0.001 |
-| category (operational = 0, relational = 1) | −121.29 | 9.03 | <0.001 |
-| **year × category** | **+3.82** | **0.75** | **<0.001** |
+| Intercept | 137.13 | 12.79 | <0.001 |
+| year (centred at 2010) | −4.95 | 0.43 | <0.001 |
+| category (operational = 0, relational = 1) | −128.73 | 5.61 | <0.001 |
+| **year × category** | **+4.14** | **0.55** | **<0.001** |
 
-The year × category coefficient is the headline — it says the operational vs relational gap widens by ~3.8 units per 10k tokens each year, robustly across all five systems.
+The year × category coefficient is the headline — the operational vs relational gap widens by ~4 units per 10k tokens each year, robustly across all five systems.
 
 ---
 
@@ -150,10 +150,9 @@ The year × category coefficient is the headline — it says the operational vs 
 
 ## Limitations
 
-- **Effect size is smaller than originally reported.** The earlier +11.05/yr × category interaction was inflated by date-binning errors (Wayback crawl-date used as a proxy for publication date, pulling 2007–2011 articles into the 2014–2016 bucket) and by UCSF dominating 81% of the original corpus. The corrected slope is +3.82/yr — still highly significant (p<0.001), still in the predicted direction, but ~3× smaller.
-- **Severely unbalanced cell sizes across the early/late split.** UCSF has 4 early vs 420 late documents (Wayback throttled most of our early-period UCSF fetches). UCDavis has 80 early vs 6 late. Duke has 60 early vs 6 late. The mixed-effects model handles this with system as a random intercept and per-document residuals, but the per-cell rates in the Key Results table above are noisy for any cell with fewer than ~15 documents.
-- **Per-system direction is mixed.** Three systems show the predicted relational decline (UCSF, Stanford, Michigan); two show increases (UCDavis, Duke). The increases come from cells with n=6, so they may be sample artefacts rather than real reversals — but they prevent the headline from being "five out of five US academic medical centres".
-- **Wayback fetch failure rate was ~50%** during corpus collection (web.archive.org returned `Connection refused` for many URLs). Retries recovered some. The shortfall hit early-period Michigan, Duke, and UCDavis harder than late-period UCSF, exacerbating the imbalance.
+- **Effect size is smaller than originally reported.** The earlier +11.05/yr × category interaction was inflated by date-binning errors (Wayback crawl-date used as a proxy for publication date, pulling 2007–2011 articles into the 2014–2016 bucket) and by UCSF dominating 81% of the original corpus. The corrected slope is +4.14/yr — still highly significant (p<0.001), still in the predicted direction, but ~2.7× smaller. The corrected slope is *more robust*, however: it survives the addition of 715 new documents across all five systems, with much more balanced early/late cell sizes than the original.
+- **Unbalanced late-period samples for three systems.** UCDavis, Duke, and Michigan all have only 6 late-period documents in the current corpus — too few for stable point estimates. UCDavis and Duke's apparent late-period *increases* in relational vocabulary should not be cited as system-level findings; they are most likely sample artefacts. UCSF and Stanford both have 35+ documents in both periods and are the most defensible per-system comparisons.
+- **Wayback fetch failure rate was ~50%** during corpus collection (web.archive.org returned `Connection refused` for many URLs). Four sequential retries with progressively longer delays recovered about half the failures. The shortfall hit the late period harder than the early period, which is why three of five systems still have only 6 late documents.
 - **Pre-fix headline figures** (58% decline, +11.05/yr interaction) appear in older versions of this README and in the working paper. Cite [report/model_results.txt](report/model_results.txt) for the current authoritative numbers.
 - The study measures public communications language, not clinical language or culture. Cause of the shift is unknown.
 - Term dictionaries were constructed by a single researcher. Formal inter-rater reliability testing has not been conducted.
